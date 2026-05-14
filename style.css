@@ -285,6 +285,65 @@ input:focus, select:focus {
 /* Rest of standard components from previous style.css to maintain functionality */
 .list-item { background: rgba(255, 255, 255, 0.03); padding: 1rem; border-radius: 16px; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--glass-border); }
 .pill { background: rgba(59, 130, 246, 0.1); color: var(--primary); padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(59, 130, 246, 0.2); }
-.modal-content { background: #0f172a; border-radius: 32px; padding: 2.5rem; border: 1px solid var(--glass-border); box-shadow: 0 0 100px rgba(0,0,0,0.8); }
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-content { 
+    background: #0f172a; 
+    border-radius: 32px; 
+    padding: 2.5rem; 
+    border: 1px solid var(--glass-border); 
+    box-shadow: 0 0 100px rgba(0,0,0,0.8);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 1.5rem;
+}
+
+.btn-text {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.btn-text:hover {
+    color: white;
+}
+
 .hidden { display: none; }
 .tab-content.active { display: block; }
