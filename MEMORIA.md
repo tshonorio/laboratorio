@@ -77,24 +77,20 @@ git remote set-url origin https://github.com/tshonorio/sistema.git
 
 ## 📅 Log de Progresso (Última atualização: 14/05/2026)
 
-### 📌 Sessão de 14/05/2026
-*   [x] **Reestruturação do Projeto:** Foco exclusivo no Web App PWA.
-*   [x] **Limpeza:** Backup e remoção de arquivos Python legado.
-*   [x] **Layout Responsivo (Desktop):** Implementação de Sidebar lateral fixa e sistema de Grid para cartões em telas grandes.
-*   [x] **Navegação Mobile:** Implementação do Menu Hambúrguer no canto superior esquerdo e remoção da barra inferior.
-*   [x] **Correções CSS:** Ajuste de visibilidade dos modais e alinhamento do menu no Poco X7 Pro.
-*   [x] **Git:** Todos os avanços commitados e enviados para o repositório `laboratorio`.
-*   [ ] **Próximos Passos:** Correção do layout e definição de identidade visual (Refinamento Premium).
-
-### 📌 Histórico Anterior
-*   [x] Desenvolvimento do Web App com design premium e modo escuro.
-*   [x] Configuração de deploy no GitHub Pages.
-*   [x] Definição de estratégia de precificação e lucro líquido.
+### 📌 Sessão de 14/05/2026 (Resumo)
+*   [x] **Navegação:** Implementação de Sidebar (PC) e Hambúrguer (Mobile).
+*   [x] **Imagens:** Lightbox e suporte a links do Google Drive.
+*   [x] **Dashboard:** Gráfico de vendas dinâmico e Alertas Inteligentes (limite de 30%).
+*   [x] **UI/UX:** Reorganização do Modal de Produtos (Grade 2x2, Centrado, Sem Scroll).
+*   [x] **Histórico:** Detalhes de prompts e preferências salvos em [sessao_14052026_detalhada.md](file:///c:/Users/mlwkt500/Documents/Soft/MEMORIAS/sessao_14052026_detalhada.md).
+*   [ ] **Próximos Passos:** Refinar identidade visual e expandir calculadoras.
 
 ---
 
-## 📝 Notas de Sinergia
-*   O usuário prefere designs que causem impacto visual ("WOW").
-*   Foco em responsividade real: o app deve ser perfeito em qualquer dispositivo.
-*   **Identidade Visual:** Buscar um visual cada vez mais limpo, tecnológico e "Apple-like" (Premium).
+## 📝 Notas de Sinergia e Preferências
+*   **Impacto Visual:** O usuário prefere designs "WOW" com gráficos e brilhos.
+*   **Responsividade:** Otimização específica para o **Poco X7 Pro** e alinhamento com cards.
+*   **Formulários:** Preferência por **textos centralizados** e layouts em **grade (2x2)**.
+*   **Compacidade:** Modais devem ser curtos para **evitar barra de rolagem**.
+*   **Armazenamento:** Priorizar links externos (Google Drive) para imagens.
 *   **Foco exclusivo:** Web App PWA.
