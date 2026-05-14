@@ -6,7 +6,7 @@
     <title>3D Print Calc Pro</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
@@ -19,7 +19,7 @@
             <button class="tab-btn active" onclick="showTab('tab-home')"><i class="fas fa-home"></i><span>Home</span></button>
             <button class="tab-btn" onclick="showTab('tab-materiais')"><i class="fas fa-box"></i><span>Materiais</span></button>
             <button class="tab-btn" onclick="showTab('tab-config')"><i class="fas fa-plus-circle"></i><span>Cadastrar</span></button>
-            <button class="tab-btn" onclick="showTab('tab-precificacao')"><i class="fas fa-tag"></i><span>Preço</span></button>
+            <button class="tab-btn" onclick="showTab('tab-precificacao')"><i class="fas fa-cash-register"></i><span>Fechamento</span></button>
             <button class="tab-btn" onclick="showTab('tab-custos')"><i class="fas fa-cog"></i><span>Ajustes</span></button>
         </nav>
 
@@ -93,108 +93,59 @@
                 </div>
             </section>
 
-            <!-- TAB: PRECIFICAÇÃO -->
             <section id="tab-precificacao" class="tab-content">
                 <div class="section-card">
-                    <h2>Identificação da Venda</h2>
+                    <h2><i class="fas fa-box-open"></i> Embalagem & Orçamento</h2>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>1. Escolher Item</label>
-                            <select id="cfg-sel-prod-name" onchange="onProductNameSelect()">
-                                <option value="">Selecione...</option>
+                            <label>1. Produto</label>
+                            <select id="p-select" onchange="fillProductData()">
+                                <option value="">Escolha...</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>2. Escolher Cor</label>
-                            <div id="cfg-sel-prod-color-pills" class="color-selection-pills">
-                                <!-- Pills via JS -->
-                                <span class="dim-text">Selecione um item primeiro...</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>3. Escolher Tamanho</label>
-                        <select id="cfg-sel-prod-size" onchange="onProductSizeSelect()">
-                            <option value="">---</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="section-card" id="card-config-material">
-                    <h2>Configurar Materiais e Quantidade</h2>
-                    <div class="form-group">
-                        <label>Filamento Utilizado</label>
-                        <select id="cfg-sel-filamento">
-                            <option value="">Selecione...</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Itens Adicionais</label>
-                        <div class="select-add-container">
-                            <select id="cfg-sel-adicional">
-                                <option value="">Selecione...</option>
+                            <label>2. Material</label>
+                            <select id="p-material">
+                                <option value="">Escolha...</option>
                             </select>
-                            <button class="btn-icon" onclick="addItemToSelection()"><i class="fas fa-plus"></i></button>
                         </div>
                     </div>
-
-                    <div class="selection-pills" id="selected-items-pills">
-                        <!-- Pills via JS -->
-                    </div>
-
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Quantidade (Un)</label>
-                            <input type="number" id="cfg-lote" value="1">
+                            <label>Quantidade</label>
+                            <input type="number" id="p-lote" value="1" oninput="calculateProject()">
                         </div>
                         <div class="form-group">
-                            <label>Multiplicador (Markup)</label>
-                            <input type="number" id="cfg-multi" value="3.0" step="0.1">
+                            <label>Margem Desejada (%)</label>
+                            <input type="number" id="p-margin" value="100" oninput="calculateProject()">
                         </div>
                     </div>
-
-                    <button class="btn btn-primary btn-block btn-large" onclick="closeItemAndAddToProject()">
-                        <i class="fas fa-box-open"></i> EMBALAR PACOTE / ADICIONAR AO PROJETO
-                    </button>
-                </div>
-                <div class="section-card">
-                    <div class="card-header">
-                        <h2>Resumo do Projeto</h2>
-                        <button class="btn-text" onclick="clearProject()"><i class="fas fa-trash"></i></button>
-                    </div>
-                    <div class="project-items-list" id="project-items-list">
-                        <!-- Itens do projeto via JS -->
-                    </div>
-                </div>
-
-                <div class="total-card">
-                    <span class="total-label">TOTAL DO ORÇAMENTO</span>
-                    <div class="total-value" id="res-total-final">R$ 0,00</div>
-                    <div class="action-buttons">
-                        <button class="btn btn-success" onclick="calculateProject()">
-                            <i class="fas fa-calculator"></i> CALCULAR VENDA
-                        </button>
-                        <button class="btn btn-orange" onclick="saveToHistory()">
-                            <i class="fas fa-cash-register"></i> VENDER
-                        </button>
-                    </div>
-                </div>
-
-                <button class="btn-outline btn-block" onclick="toggleDetails()">
-                    <span id="btn-toggle-text">EXIBIR DETALHAMENTO</span> <i class="fas fa-chevron-down" id="toggle-icon"></i>
-                </button>
-
-                <div id="detailed-results" class="detailed-container hidden">
-                    <div class="res-row"><span>Custo Total:</span> <span id="res-custo-total">R$ 0,00</span></div>
-                    <div class="res-row"><span>Itens Extras:</span> <span id="res-custo-extras">R$ 0,00</span></div>
-                    <div class="res-row highlight"><span>Lucro Bruto:</span> <span id="res-lucro-bruto">R$ 0,00</span></div>
                     
-                    <h3>Lucro por Canal</h3>
-                    <div class="res-row success"><span>Venda Direta:</span> <span id="res-lucro-direta">R$ 0,00</span></div>
-                    <div class="res-row success"><span>M.L. Clássico:</span> <span id="res-lucro-mlc">R$ 0,00</span></div>
-                    <div class="res-row success"><span>M.L. Premium:</span> <span id="res-lucro-mlp">R$ 0,00</span></div>
-                    <div class="res-row success"><span>Shopee:</span> <span id="res-lucro-shopee">R$ 0,00</span></div>
+                    <div class="total-card">
+                        <span class="total-label">Custo Base (Energia + Deprec + Mat)</span>
+                        <div id="res-custo-base" class="total-value" style="font-size: 1.4rem; margin-bottom: 0.5rem; background: none; -webkit-text-fill-color: var(--text-dim);">R$ 0,00</div>
+                        <span class="total-label">Preço Sugerido (Unidade)</span>
+                        <div id="res-total" class="total-value">R$ 0,00</div>
+                        
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="packItem()">
+                            <i class="fas fa-box"></i> Embalar para Venda
+                        </button>
+                    </div>
+
+                    <div id="project-items" class="list-container">
+                        <!-- Queue of items in current project -->
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2><i class="fas fa-cash-register"></i> Fechamento do Dia</h2>
+                    <div id="packed-list" class="list-container">
+                        <!-- Items ready for checkout -->
+                    </div>
+                    
+                    <button class="btn btn-success" style="width: 100%; margin-top: 1.5rem; padding: 1.5rem;" onclick="closeDay()">
+                        <i class="fas fa-check-double"></i> Fechar Dia & Gerar Relatório
+                    </button>
                 </div>
             </section>
 

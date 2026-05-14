@@ -30,7 +30,7 @@ Estamos desenvolvendo um **Web App Premium (PWA)** de precificação para impres
     *   Fundo: `#020617` (Deep Blue/Black).
     *   Primária: `#3b82f6` (Electric Blue) com brilho (glow).
     *   Sucesso: `#10b981` (Emerald Green) para valores de lucro.
-*   **Tipografia:** Fonte `Outfit` ou `Inter` para um visual tecnológico e limpo.
+*   **Tipografia:** Fonte **Plus Jakarta Sans** (Moderna/Premium).
 
 ---
 
@@ -85,8 +85,16 @@ git remote set-url origin https://github.com/tshonorio/sistema.git
 ## 🛠️ Skills Ativas (Protocolos de IA)
 O assistente opera sob os seguintes protocolos salvos em `MEMORIAS/SKILLS/`:
 - **`SKILL_DESIGN_PREMIUM.md`**: Regras de UI, Glassmorphism e especificações do Poco X7 Pro.
+- **`SKILL_TYPOGRAPHY.md`**: Gestão da fonte **Plus Jakarta Sans** e escalonamento.
 - **`SKILL_GIT_WORKFLOW.md`**: Protocolo de Commits, Repositórios e Logs.
 - **`SKILL_DATA_LOGIC.md`**: Regras de estoque (30%), precificação e sanitização de Drive.
+
+---
+
+## 🔄 Fluxo de Trabalho (Workflow)
+1. **Produção:** Configuração de material + produto.
+2. **Embalagem:** Itens prontos são movidos para a aba de **Fechamento**.
+3. **Fechamento:** Cálculo pro (fórmula reversa) e geração de **Relatório Diário**.
 
 ---
 

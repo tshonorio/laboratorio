@@ -24,6 +24,7 @@ let favoriteColors = JSON.parse(localStorage.getItem('favoriteColors')) || ["#34
 let vendas = JSON.parse(localStorage.getItem('vendas')) || [];
 
 let projectItems = [];
+let packedItems = JSON.parse(localStorage.getItem('packedItems')) || [];
 let selectedItems = []; // Selected additions for the current config
 
 // --- INITIALIZATION ---
@@ -499,54 +500,63 @@ function loadSettingsFields() {
     document.getElementById('st-falha').value = s.falha;
 }
 
-function saveToHistory() {
-    if(projectItems.length === 0) return alert("Nada para salvar!");
+function packItem() {
+    // Current calculation logic
+    const id = document.getElementById('cfg-sel-prod-name').value;
+    const p = produtos[id];
+    if (!p || projectItems.length === 0) return alert("Selecione e configure itens primeiro!");
 
-    // Debit Stock
-    for (let p of projectItems) {
-        // Debit Product Stock
-        if (produtos[p.prodKey]) {
-            produtos[p.prodKey].estoque -= p.lote;
-        }
-        
-        // Debit Filament Stock
-        if (filamentos[p.filamento]) {
-            const usageG = p.peso * p.lote;
-            filamentos[p.filamento].estoque_g -= usageG;
-        }
+    const packed = {
+        id: 'pk' + Date.now(),
+        modelo: p.nome,
+        detalhes: projectItems.map(item => `${item.lote}x ${item.modelo}`).join(', '),
+        totalVenda: parseFloat(document.getElementById('res-total-final').innerText.replace('R$ ', '').replace(',', '.')),
+        data: new Date().toISOString(),
+        items: [...projectItems]
+    };
 
-        // Debit Additional Items Stock
-        for (let exKey of p.extras) {
-            if (adicionais[exKey]) {
-                adicionais[exKey].estoque -= p.lote;
-            }
-        }
-    }
-
-    // Record Sales
-    for (let p of projectItems) {
-        vendas.push({ 
-            nome: p.modelo, 
-            lote: p.lote, 
-            data: new Date().toISOString() 
-        });
-    }
-
-    // Reset fields
-    document.getElementById('cfg-sel-prod-name').value = "";
-    onProductNameSelect(); // Clears colors and sizes
-    document.getElementById('cfg-lote').value = "1";
-    document.getElementById('cfg-multi').value = settings.mlp || "1";
+    packedItems.push(packed);
+    localStorage.setItem('packedItems', JSON.stringify(packedItems));
     
-    currentSelectedProductId = null;
-    currentSelectedColor = null;
-    selectedItems = [];
-    renderPills();
-    
+    // Clear current project
     projectItems = [];
     updateProjectTable();
     updateDashboard();
-    document.getElementById('res-total-final').innerText = "R$ 0,00";
+    updateLists();
+    
+    alert("Pedido embalado e pronto para o fechamento!");
+    showTab('tab-precificacao');
+}
+
+function removePackedItem(index) {
+    packedItems.splice(index, 1);
+    localStorage.setItem('packedItems', JSON.stringify(packedItems));
+    updateLists();
+}
+
+function closeDay() {
+    if (packedItems.length === 0) return alert("Não há itens embalados.");
+    
+    const total = packedItems.reduce((acc, p) => acc + p.totalVenda, 0);
+    if(!confirm(`Deseja fechar o dia? \nTotal: R$ ${total.toFixed(2)}`)) return;
+
+    packedItems.forEach(p => {
+        p.items.forEach(item => {
+            vendas.push({
+                nome: item.modelo,
+                lote: item.lote,
+                valor: item.vUnitario * item.lote,
+                data: p.data
+            });
+        });
+    });
+
+    packedItems = [];
+    localStorage.setItem('packedItems', JSON.stringify(packedItems));
+    persist();
+    updateLists();
+    updateDashboard();
+    alert("Dia fechado com sucesso!");
 }
 
 // --- COLOR FAVORITES ---
@@ -629,6 +639,40 @@ function openImageViewer(src) {
 // --- DASHBOARD & ALERTS ---
 function updateDashboard() {
     const lowStockItems = [];
+
+    // --- 0. RENDER PROJECT & PACKED LISTS ---
+    const projList = document.getElementById('project-items-list');
+    if (projList) {
+        projList.innerHTML = projectItems.map((p, index) => `
+            <div class="list-item">
+                <div style="flex:1">
+                    <strong>${p.modelo}</strong><br>
+                    <small>${p.lote} un - ${p.tempo}h - R$ ${p.vUnitario.toFixed(2)}/un</small>
+                </div>
+                <button class="btn-icon danger" onclick="removeProjectItem(${index})"><i class="fas fa-trash"></i></button>
+            </div>
+        `).join('');
+    }
+
+    const packedList = document.getElementById('packed-list');
+    if (packedList) {
+        if (packedItems.length === 0) {
+            packedList.innerHTML = '<div class="dim-text text-center" style="padding: 2rem;">Aguardando pacotes...</div>';
+        } else {
+            packedList.innerHTML = packedItems.map((p, index) => `
+                <div class="list-item">
+                    <div style="flex:1">
+                        <strong>Pedido #${p.id.slice(-4)}</strong><br>
+                        <small>${p.detalhes}</small>
+                    </div>
+                    <div style="text-align: right; margin-right: 15px;">
+                        <span class="pill">R$ ${p.totalVenda.toFixed(2)}</span>
+                    </div>
+                    <button class="btn-icon danger" onclick="removePackedItem(${index})"><i class="fas fa-times"></i></button>
+                </div>
+            `).join('');
+        }
+    }
 
     // --- 1. RENDER CATALOG ---
     const catalog = document.getElementById('product-catalog');
