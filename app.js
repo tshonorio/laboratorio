@@ -154,7 +154,10 @@ function saveProduct() {
     const tempo = parseFloat(document.getElementById('m-prod-tempo').value);
     const estoque = parseInt(document.getElementById('m-prod-estoque').value);
     const estoqueIni = parseInt(document.getElementById('m-prod-estoque-ini').value);
-    const imagem = currentProductImage;
+    
+    // Prioritize URL if provided, otherwise use currentProductImage (Base64)
+    const urlInput = document.getElementById('m-prod-img-url').value;
+    const imagem = urlInput ? cleanDriveLink(urlInput) : currentProductImage;
 
     if(!nome) return alert("Preencha o nome do produto");
     produtos[id] = { id, nome, tamanho: tam, cor, peso, tempo, estoque, estoque_inicial: estoqueIni, imagem };
@@ -176,6 +179,7 @@ function editProduct(id) {
     document.getElementById('m-prod-tempo').value = p.tempo;
     document.getElementById('m-prod-estoque').value = p.estoque;
     document.getElementById('m-prod-estoque-ini').value = p.estoque_inicial || p.estoque;
+    document.getElementById('m-prod-img-url').value = p.imagem && p.imagem.startsWith('http') ? p.imagem : '';
     
     if(p.imagem) {
         setImagePreview(p.imagem);
@@ -585,6 +589,34 @@ function resetImagePreview() {
     preview.innerHTML = '<i class="fas fa-camera"></i><span>Clique para selecionar</span>';
     currentProductImage = null;
     document.getElementById('m-prod-img').value = '';
+    document.getElementById('m-prod-img-url').value = '';
+}
+
+function cleanDriveLink(url) {
+    if (!url) return "";
+    // Google Drive direct link conversion
+    if (url.includes("drive.google.com")) {
+        const parts = url.split("/");
+        const idIdx = parts.indexOf("d") + 1;
+        if (idIdx > 0 && parts[idIdx]) {
+            return `https://drive.google.com/uc?export=view&id=${parts[idIdx].split("?")[0]}`;
+        }
+    }
+    return url;
+}
+
+function previewImageUrl(url) {
+    if (!url) return resetImagePreview();
+    const clean = cleanDriveLink(url);
+    setImagePreview(clean);
+}
+
+function openImageViewer(src) {
+    if (!src) return;
+    const modal = document.getElementById('modal-viewer');
+    const img = document.getElementById('viewer-img');
+    img.src = src;
+    modal.classList.add('active');
 }
 
 // --- DASHBOARD & ALERTS ---
@@ -596,8 +628,9 @@ function updateDashboard() {
     if (catalog) {
         catalog.innerHTML = Object.values(produtos).map(p => `
             <div class="product-card">
-                <div class="product-card-img" style="background-image: ${p.imagem ? `url(${p.imagem})` : 'none'}">
+                <div class="product-card-img" style="background-image: ${p.imagem ? `url(${p.imagem})` : 'none'}" onclick="openImageViewer('${p.imagem}')">
                     ${!p.imagem ? '<i class="fas fa-image"></i>' : ''}
+                    <div class="img-overlay"><i class="fas fa-search-plus"></i></div>
                 </div>
                 <div class="product-card-info">
                     <h4>${p.nome}</h4>
