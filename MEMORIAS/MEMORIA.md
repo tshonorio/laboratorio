@@ -1,6 +1,13 @@
-# 🧠 Memória de Contexto do Projeto: Calculadora 3D Pro
+# 🧠 Memória de Contexto: Calculadora 3D Pro
 
-Este arquivo serve para manter a sinergia entre o usuário (tshonorio) e o assistente IA (Antigravity). Ele deve ser lido no início de cada sessão para retomar o progresso e manter as diretrizes de design.
+> [!IMPORTANT]
+> **INSTRUÇÃO DE INICIALIZAÇÃO (AUTO-RUN PROTOCOL):**
+> Sempre que esta memória for acessada para iniciar uma nova sessão, o assistente **DEVE** seguir este caminho de leitura sequencial antes de responder:
+> 1. Ler `MEMORIAS/SKILLS/SKILL_GIT_WORKFLOW.md` (Protocolo de Segurança).
+> 2. Ler `MEMORIAS/SKILLS/SKILL_DESIGN_PREMIUM.md` (Padrões de UI/UX).
+> 3. Ler `MEMORIAS/SKILLS/SKILL_DATA_LOGIC.md` (Regras de Cálculo/Estoque).
+> 4. Ler o último log detalhado em `MEMORIAS/sessao_..._detalhada.md` (Contexto de prompts e gostos).
+> 5. Resumir o progresso baseado no "Onde Paramos" abaixo.
 
 ---
 
