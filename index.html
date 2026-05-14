@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3D Print Calc Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1><i class="fas fa-cube"></i> 3D Print Calc <span>Pro</span></h1>
+        </header>
+
+        <nav class="tab-bar">
+            <button class="tab-btn active" onclick="showTab('tab-home')"><i class="fas fa-home"></i><span>Home</span></button>
+            <button class="tab-btn" onclick="showTab('tab-materiais')"><i class="fas fa-box"></i><span>Materiais</span></button>
+            <button class="tab-btn" onclick="showTab('tab-config')"><i class="fas fa-plus-circle"></i><span>Cadastrar</span></button>
+            <button class="tab-btn" onclick="showTab('tab-precificacao')"><i class="fas fa-tag"></i><span>Preço</span></button>
+            <button class="tab-btn" onclick="showTab('tab-custos')"><i class="fas fa-cog"></i><span>Ajustes</span></button>
+        </nav>
+
+        <main class="content">
+            <!-- TAB: HOME (TELA INICIAL) -->
+            <section id="tab-home" class="tab-content active">
+                <div id="low-stock-alert" class="alert-container hidden">
+                    <div class="alert-header">
+                        <i class="fas fa-exclamation-triangle"></i> ATENÇÃO: ESTOQUE BAIXO
+                    </div>
+                    <ul id="low-stock-list" class="alert-list">
+                        <!-- Alerts via JS -->
+                    </ul>
+                </div>
+
+                <div class="section-card dashboard-card">
+                    <h2><i class="fas fa-th"></i> Catálogo de Produtos</h2>
+                    <div id="product-catalog" class="product-grid">
+                        <!-- Cards via JS -->
+                    </div>
+                </div>
+
+                <div class="section-card dashboard-card">
+                    <h2><i class="fas fa-chart-bar"></i> Produtos Mais Vendidos</h2>
+                    <div id="sales-chart" class="sales-chart-container">
+                        <!-- Chart via JS -->
+                    </div>
+                </div>
+
+                <div class="section-card dashboard-card">
+                    <h2><i class="fas fa-exclamation-circle"></i> Status de Alertas</h2>
+                    <div id="stock-dashboard" class="dashboard-grid">
+                        <!-- Only Alerts count or simplified status -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: MATERIAIS -->
+            <section id="tab-materiais" class="tab-content">
+                <div class="section-card">
+                    <h2>Gerenciar Filamentos</h2>
+                    <div class="list-container" id="list-filamentos">
+                        <!-- Itens via JS -->
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="document.getElementById('m-fil-id').value=''; openModal('modal-filamento')">
+                        <i class="fas fa-plus"></i> Novo Filamento
+                    </button>
+                </div>
+
+                <div class="section-card">
+                    <h2>Itens Adicionais</h2>
+                    <div class="list-container" id="list-adicionais">
+                        <!-- Itens via JS -->
+                    </div>
+                    <button class="btn btn-secondary btn-block" onclick="document.getElementById('m-add-id').value=''; openModal('modal-adicional')">
+                        <i class="fas fa-plus"></i> Novo Item Extra
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB: CADASTRAR PRODUTO (Antiga Config) -->
+            <section id="tab-config" class="tab-content">
+                <div class="section-card">
+                    <h2>Gerenciar Produtos</h2>
+                    <div class="list-container" id="list-produtos">
+                        <!-- Itens via JS -->
+                    </div>
+                    <button class="btn btn-success btn-block" onclick="document.getElementById('m-prod-id').value=''; openModal('modal-produto')">
+                        <i class="fas fa-plus"></i> Novo Produto
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB: PRECIFICAÇÃO -->
+            <section id="tab-precificacao" class="tab-content">
+                <div class="section-card">
+                    <h2>Identificação da Venda</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>1. Escolher Item</label>
+                            <select id="cfg-sel-prod-name" onchange="onProductNameSelect()">
+                                <option value="">Selecione...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>2. Escolher Cor</label>
+                            <div id="cfg-sel-prod-color-pills" class="color-selection-pills">
+                                <!-- Pills via JS -->
+                                <span class="dim-text">Selecione um item primeiro...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>3. Escolher Tamanho</label>
+                        <select id="cfg-sel-prod-size" onchange="onProductSizeSelect()">
+                            <option value="">---</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-card" id="card-config-material">
+                    <h2>Configurar Materiais e Quantidade</h2>
+                    <div class="form-group">
+                        <label>Filamento Utilizado</label>
+                        <select id="cfg-sel-filamento">
+                            <option value="">Selecione...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Itens Adicionais</label>
+                        <div class="select-add-container">
+                            <select id="cfg-sel-adicional">
+                                <option value="">Selecione...</option>
+                            </select>
+                            <button class="btn-icon" onclick="addItemToSelection()"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="selection-pills" id="selected-items-pills">
+                        <!-- Pills via JS -->
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Quantidade (Un)</label>
+                            <input type="number" id="cfg-lote" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Multiplicador (Markup)</label>
+                            <input type="number" id="cfg-multi" value="3.0" step="0.1">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-block btn-large" onclick="closeItemAndAddToProject()">
+                        <i class="fas fa-box-open"></i> EMBALAR PACOTE / ADICIONAR AO PROJETO
+                    </button>
+                </div>
+                <div class="section-card">
+                    <div class="card-header">
+                        <h2>Resumo do Projeto</h2>
+                        <button class="btn-text" onclick="clearProject()"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <div class="project-items-list" id="project-items-list">
+                        <!-- Itens do projeto via JS -->
+                    </div>
+                </div>
+
+                <div class="total-card">
+                    <span class="total-label">TOTAL DO ORÇAMENTO</span>
+                    <div class="total-value" id="res-total-final">R$ 0,00</div>
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="calculateProject()">
+                            <i class="fas fa-calculator"></i> CALCULAR VENDA
+                        </button>
+                        <button class="btn btn-orange" onclick="saveToHistory()">
+                            <i class="fas fa-cash-register"></i> VENDER
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn-outline btn-block" onclick="toggleDetails()">
+                    <span id="btn-toggle-text">EXIBIR DETALHAMENTO</span> <i class="fas fa-chevron-down" id="toggle-icon"></i>
+                </button>
+
+                <div id="detailed-results" class="detailed-container hidden">
+                    <div class="res-row"><span>Custo Total:</span> <span id="res-custo-total">R$ 0,00</span></div>
+                    <div class="res-row"><span>Itens Extras:</span> <span id="res-custo-extras">R$ 0,00</span></div>
+                    <div class="res-row highlight"><span>Lucro Bruto:</span> <span id="res-lucro-bruto">R$ 0,00</span></div>
+                    
+                    <h3>Lucro por Canal</h3>
+                    <div class="res-row success"><span>Venda Direta:</span> <span id="res-lucro-direta">R$ 0,00</span></div>
+                    <div class="res-row success"><span>M.L. Clássico:</span> <span id="res-lucro-mlc">R$ 0,00</span></div>
+                    <div class="res-row success"><span>M.L. Premium:</span> <span id="res-lucro-mlp">R$ 0,00</span></div>
+                    <div class="res-row success"><span>Shopee:</span> <span id="res-lucro-shopee">R$ 0,00</span></div>
+                </div>
+            </section>
+
+            <!-- TAB: CUSTOS -->
+            <section id="tab-custos" class="tab-content">
+                <div class="section-card">
+                    <h2>Configurações Base</h2>
+                    <div class="form-group">
+                        <label>Potência (W)</label>
+                        <input type="number" id="st-potencia" value="1300">
+                    </div>
+                    <div class="form-group">
+                        <label>Custo kW/h (R$)</label>
+                        <input type="number" id="st-kwh" value="0.84" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor Máquina (R$)</label>
+                        <input type="number" id="st-vmaq" value="4500">
+                    </div>
+                    <div class="form-group">
+                        <label>Vida Útil (h)</label>
+                        <input type="number" id="st-vutil" value="20000">
+                    </div>
+                    <div class="form-group">
+                        <label>Custos Fixos/Mês (R$)</label>
+                        <input type="number" id="st-cfixo" value="300">
+                    </div>
+                    <div class="form-group">
+                        <label>Unidades/Mês</label>
+                        <input type="number" id="st-umes" value="40">
+                    </div>
+                </div>
+                
+                <div class="section-card">
+                    <h2>Taxas (%)</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Imposto</label>
+                            <input type="number" id="st-imp" value="6.0">
+                        </div>
+                        <div class="form-group">
+                            <label>Cartão</label>
+                            <input type="number" id="st-cartao" value="5.0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>ML Clássico</label>
+                            <input type="number" id="st-mlc" value="12.0">
+                        </div>
+                        <div class="form-group">
+                            <label>ML Premium</label>
+                            <input type="number" id="st-mlp" value="17.0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Shopee (%)</label>
+                        <input type="number" id="st-sho" value="20.0">
+                    </div>
+                    <div class="form-group">
+                        <label>Taxa Falhas (%)</label>
+                        <input type="number" id="st-falha" value="15.0">
+                    </div>
+                    <div class="form-group" style="margin-top: 20px; padding: 15px; background: rgba(52, 152, 219, 0.1); border-radius: 10px;">
+                        <h4><i class="fas fa-shield-alt"></i> Backup Local Automático</h4>
+                        <p class="dim-text" style="margin-bottom: 10px;">Para usar, execute o arquivo <code>server_backup.py</code> no seu PC.</p>
+                        <button class="btn btn-secondary btn-block" onclick="triggerLocalBackup()">
+                            <i class="fas fa-sync"></i> Forçar Backup Agora
+                        </button>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="saveSettings()">Salvar Ajustes</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL: NOVO FILAMENTO -->
+    <div id="modal-filamento" class="modal">
+        <div class="modal-content">
+            <input type="hidden" id="m-fil-id">
+            <h3>Cadastrar Filamento</h3>
+            <div class="form-group">
+                <label>Fabricante</label>
+                <input type="text" id="m-fil-fab" placeholder="Ex: Creality">
+            </div>
+            <div class="form-group">
+                <label>Material</label>
+                <select id="m-fil-mat">
+                    <option value="PLA">PLA</option>
+                    <option value="ABS">ABS</option>
+                    <option value="PETG">PETG</option>
+                    <option value="TPU">TPU</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Preço 1kg (R$)</label>
+                <input type="number" id="m-fil-preco" value="89.90">
+            </div>
+            <div class="form-group">
+                <label>Estoque (g)</label>
+                <input type="number" id="m-fil-estoque" value="1000">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-text" onclick="closeModal('modal-filamento')">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveFilament()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVO ITEM -->
+    <div id="modal-adicional" class="modal">
+        <div class="modal-content">
+            <input type="hidden" id="m-add-id">
+            <h3>Cadastrar Item Extra</h3>
+            <div class="form-group">
+                <label>Nome do Item</label>
+                <input type="text" id="m-add-nome" placeholder="Ex: Argola Chaveiro">
+            </div>
+            <div class="form-group">
+                <label>Preço Unit. (R$)</label>
+                <input type="number" id="m-add-preco" value="0.50" step="0.01">
+            </div>
+            <div class="form-group">
+                <label>Estoque Atual</label>
+                <input type="number" id="m-add-estoque" value="100">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-text" onclick="closeModal('modal-adicional')">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveAdicional()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVO PRODUTO -->
+    <div id="modal-produto" class="modal">
+        <div class="modal-content">
+            <input type="hidden" id="m-prod-id">
+            <h3>Cadastrar Produto</h3>
+            <div class="form-group">
+                <label>Foto do Produto</label>
+                <div class="image-upload-container">
+                    <input type="file" id="m-prod-img" accept="image/*" onchange="previewProductImage(this)">
+                    <div id="m-prod-img-preview" class="img-preview-box">
+                        <i class="fas fa-camera"></i>
+                        <span>Clique para selecionar</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Nome do Produto</label>
+                <input type="text" id="m-prod-nome" placeholder="Ex: Batman Articulado">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tamanho</label>
+                    <input type="text" id="m-prod-tam" placeholder="Ex: 15cm">
+                </div>
+                <div class="form-group">
+                    <label>Cor do Produto</label>
+                    <div class="color-picker-container">
+                        <input type="color" id="m-prod-cor" value="#3498DB" onchange="updateColorPreview()">
+                        <button class="btn-icon" onclick="saveFavoriteColor()" title="Salvar como favorita"><i class="fas fa-star"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div id="favorite-colors" class="favorites-grid">
+                <!-- Colors via JS -->
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Peso (g)</label>
+                    <input type="number" id="m-prod-peso" value="100">
+                </div>
+                <div class="form-group">
+                    <label>Tempo (h)</label>
+                    <input type="number" id="m-prod-tempo" value="1" step="0.1">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Estoque Atual (un)</label>
+                    <input type="number" id="m-prod-estoque" value="10">
+                </div>
+                <div class="form-group">
+                    <label>Estoque Inicial (un)</label>
+                    <input type="number" id="m-prod-estoque-ini" value="10">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-text" onclick="closeModal('modal-produto')">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveProduct()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
