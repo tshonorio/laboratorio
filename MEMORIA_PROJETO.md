@@ -4,6 +4,13 @@ Este arquivo serve para manter a sinergia entre o usuário (tshonorio) e o assis
 
 ---
 
+## 📍 ONDE PARAMOS (STATUS ATUAL)
+> **Última Sessão:** 14/05/2026
+> **Resumo:** Removemos todo o legado em Python e migramos 100% do foco para o Web App PWA. Organizamos os repositórios (`sistema` para produção e `laboratorio` para testes diários). O ambiente está limpo, configurado e o código já foi enviado para o `laboratorio`.
+> **Próxima Ação:** Definir quais serão as novas funcionalidades do Web App (ex: melhorias na UI, novos cálculos ou ajustes no código JS existente) e iniciar o desenvolvimento.
+
+---
+
 ## 🚀 Visão Geral
 Estamos desenvolvendo um **Web App Premium (PWA)** de precificação para impressão 3D — versão mobile-friendly para consulta rápida e orçamentos, hospedada no GitHub Pages.
 
@@ -69,14 +76,20 @@ git remote set-url origin https://github.com/tshonorio/sistema.git
 ---
 
 ## 📅 Log de Progresso (Última atualização: 14/05/2026)
+
+### 📌 Sessão de 14/05/2026
+*   [x] **Reestruturação do Projeto:** Decisão de manter foco exclusivo no Web App PWA, abandonando o desenvolvimento Python.
+*   [x] **Limpeza de Arquivos Python:** Remoção de arquivos `.py`, `.bat`, `.spec` e pastas de build. Backup salvo em `backup_python_14052026.zip`.
+*   [x] **Limpeza da pasta web_app:** Pasta duplicada excluída para manter o `index.html` completo na raiz do projeto.
+*   [x] **Configuração de Repositórios:** Definição das URLs para `sistema` (Produção) e `laboratorio` (Testes).
+*   [x] **Sincronização:** Git reconfigurado para apontar para o `laboratorio` e push inicial realizado com sucesso.
+*   [▶️] **Sessão iniciada — trabalhando no laboratorio.**
+*   [ ] **Próximo Passo:** Configurar e evoluir o Web App com novas funcionalidades.
+
+### 📌 Histórico Anterior
 *   [x] Desenvolvimento do Web App com design premium e modo escuro.
 *   [x] Configuração de deploy no GitHub Pages.
 *   [x] Definição de estratégia de precificação e lucro líquido.
-*   [x] Reestruturação do projeto: foco exclusivo no Web App PWA.
-*   [x] Remoção dos arquivos Python (backup em `backup_python_14052026.zip`).
-*   [x] Criação dos repositórios `sistema` (produção) e `laboratorio` (testes).
-*   [▶️] **14/05/2026 — Sessão iniciada — trabalhando no laboratorio.**
-*   [ ] **Próximo Passo:** Configurar e evoluir o Web App com novas funcionalidades.
 
 ---
 
