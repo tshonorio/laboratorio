@@ -75,6 +75,14 @@ git remote set-url origin https://github.com/tshonorio/sistema.git
 
 ---
 
+## 🛠️ Skills Ativas (Protocolos de IA)
+O assistente opera sob os seguintes protocolos salvos em `MEMORIAS/SKILLS/`:
+- **`SKILL_DESIGN_PREMIUM.md`**: Regras de UI, Glassmorphism e especificações do Poco X7 Pro.
+- **`SKILL_GIT_WORKFLOW.md`**: Protocolo de Commits, Repositórios e Logs.
+- **`SKILL_DATA_LOGIC.md`**: Regras de estoque (30%), precificação e sanitização de Drive.
+
+---
+
 ## 📅 Log de Progresso (Última atualização: 14/05/2026)
 
 ### 📌 Sessão de 14/05/2026 (Resumo)
@@ -82,7 +90,8 @@ git remote set-url origin https://github.com/tshonorio/sistema.git
 *   [x] **Imagens:** Lightbox e suporte a links do Google Drive.
 *   [x] **Dashboard:** Gráfico de vendas dinâmico e Alertas Inteligentes (limite de 30%).
 *   [x] **UI/UX:** Reorganização do Modal de Produtos (Grade 2x2, Centrado, Sem Scroll).
-*   [x] **Histórico:** Detalhes de prompts e preferências salvos em [sessao_14052026_detalhada.md](file:///c:/Users/mlwkt500/Documents/Soft/MEMORIAS/sessao_14052026_detalhada.md).
+*   [x] **Sistematização:** Criação da estrutura de **Skills** para garantir consistência.
+*   [x] **Histórico:** Detalhes salvos em [sessao_14052026_detalhada.md](file:///c:/Users/mlwkt500/Documents/Soft/MEMORIAS/sessao_14052026_detalhada.md).
 *   [ ] **Próximos Passos:** Refinar identidade visual e expandir calculadoras.
 
 ---
