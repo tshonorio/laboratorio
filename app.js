@@ -68,7 +68,11 @@ function saveFilament() {
     const estoque = parseFloat(document.getElementById('m-fil-estoque').value);
 
     if(!fab) return alert("Preencha o fabricante");
-    filamentos[id] = { id, fabricante: fab, material: mat, preco_kg: preco, estoque_g: estoque };
+    
+    // Set initial stock if new or if not already set
+    const initial = filamentos[id] ? (filamentos[id].estoque_inicial || estoque) : estoque;
+    
+    filamentos[id] = { id, fabricante: fab, material: mat, preco_kg: preco, estoque_g: estoque, estoque_inicial: initial };
     
     persist();
     updateLists();
@@ -102,7 +106,10 @@ function saveAdicional() {
     const estoque = parseFloat(document.getElementById('m-add-estoque').value);
 
     if(!nome) return alert("Preencha o nome");
-    adicionais[id] = { id, nome, preco, estoque };
+    
+    const initial = adicionais[id] ? (adicionais[id].estoque_inicial || estoque) : estoque;
+    
+    adicionais[id] = { id, nome, preco, estoque, estoque_inicial: initial };
     
     persist();
     updateLists();
@@ -669,26 +676,37 @@ function updateDashboard() {
         }
     }
 
-    // --- 3. CHECK ALERTS ---
+    // --- 3. CHECK ALERTS (30% Threshold) ---
     Object.entries(produtos).forEach(([id, p]) => {
         const threshold = (p.estoque_inicial || 10) * 0.3;
-        if(p.estoque <= threshold) lowStockItems.push({ name: `${p.nome} (${p.cor})`, type: 'Produto', val: p.estoque + ' un' });
+        if(p.estoque <= threshold) {
+            lowStockItems.push({ name: `${p.nome} (${p.cor})`, type: 'Produto', val: `${p.estoque} un`, pct: Math.round((p.estoque/p.estoque_inicial)*100) });
+        }
     });
 
-    Object.entries(filamentos).forEach(([name, f]) => {
-        if(f.estoque_g <= 300) lowStockItems.push({ name, type: 'Filamento', val: f.estoque_g.toFixed(0) + 'g' });
+    Object.entries(filamentos).forEach(([id, f]) => {
+        const initial = f.estoque_inicial || 1000;
+        const threshold = initial * 0.3;
+        if(f.estoque_g <= threshold) {
+            lowStockItems.push({ name: `${f.fabricante} (${f.material})`, type: 'Filamento', val: `${f.estoque_g.toFixed(0)}g`, pct: Math.round((f.estoque_g/initial)*100) });
+        }
     });
 
-    Object.entries(adicionais).forEach(([name, a]) => {
-        if(a.estoque <= 20) lowStockItems.push({ name, type: 'Item Extra', val: a.estoque + ' un' });
+    Object.entries(adicionais).forEach(([id, a]) => {
+        const initial = a.estoque_inicial || 100;
+        const threshold = initial * 0.3;
+        if(a.estoque <= threshold) {
+            lowStockItems.push({ name: a.nome, type: 'Item Extra', val: `${a.estoque} un`, pct: Math.round((a.estoque/initial)*100) });
+        }
     });
 
     // Render Status Grid
     const dash = document.getElementById('stock-dashboard');
     dash.innerHTML = `
-        <div class="dash-item" style="grid-column: span 2;">
-            <h3>Alertas Ativos</h3>
-            <div class="value" style="color: ${lowStockItems.length > 0 ? '#E74C3C' : '#2ECC71'}">${lowStockItems.length}</div>
+        <div class="dash-item" style="grid-column: span 2; border-color: ${lowStockItems.length > 0 ? 'var(--danger)' : 'var(--success)'}">
+            <h3>Alertas de Estoque</h3>
+            <div class="value" style="color: ${lowStockItems.length > 0 ? 'var(--danger)' : 'var(--success)'}">${lowStockItems.length}</div>
+            <p style="font-size: 0.8rem; opacity: 0.6;">Itens abaixo de 30%</p>
         </div>
     `;
 
@@ -699,7 +717,16 @@ function updateDashboard() {
     if(lowStockItems.length > 0) {
         alertCont.classList.remove('hidden');
         alertList.innerHTML = lowStockItems.map(item => `
-            <li><strong>${item.type}:</strong> ${item.name} - <span style="color:#E74C3C">Restam apenas ${item.val}</span></li>
+            <li class="alert-item">
+                <div class="alert-info">
+                    <span class="alert-type">${item.type}</span>
+                    <span class="alert-name">${item.name}</span>
+                </div>
+                <div class="alert-status">
+                    <span class="alert-qty">${item.val}</span>
+                    <span class="alert-pct">(${item.pct}%)</span>
+                </div>
+            </li>
         `).join('');
     } else {
         alertCont.classList.add('hidden');
