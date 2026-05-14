@@ -31,47 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLists();
     updateSelectors();
     loadSettingsFields();
-    initDraggableMenu();
     updateDashboard();
     renderFavoriteColors();
 });
 
-// --- DRAGGABLE MENU ---
-function initDraggableMenu() {
-    const menu = document.querySelector('.tab-bar');
-    let isDragging = false;
-    let offsetX, offsetY;
-
-    menu.addEventListener('mousedown', (e) => {
-        if (window.innerWidth >= 1024) return; // Disabled on desktop
-        if (e.target.closest('.tab-btn')) return; // Allow clicking buttons
-        isDragging = true;
-        offsetX = e.clientX - menu.offsetLeft;
-        offsetY = e.clientY - menu.offsetTop;
-        menu.style.transition = 'none';
-        menu.classList.add('dragging');
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        let x = e.clientX - offsetX;
-        let y = e.clientY - offsetY;
-        
-        // Boundaries
-        x = Math.max(0, Math.min(window.innerWidth - menu.offsetWidth, x));
-        y = Math.max(0, Math.min(window.innerHeight - menu.offsetHeight, y));
-
-        menu.style.left = x + (menu.offsetWidth / 2) + 'px';
-        menu.style.top = y + (menu.offsetHeight / 2) + 'px';
-        menu.style.bottom = 'auto';
-        menu.style.transform = 'translate(-50%, -50%)';
-    });
-
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-        menu.style.transition = '0.3s';
-        menu.classList.remove('dragging');
-    });
+function toggleMobileMenu() {
+    document.querySelector('.tab-bar').classList.toggle('open');
 }
 
 // --- TAB SYSTEM ---
@@ -84,6 +49,11 @@ function showTab(tabId) {
     // Find the button that corresponds to this tabId
     const btn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
     if(btn) btn.classList.add('active');
+
+    // Close mobile menu if open
+    if (window.innerWidth < 1024) {
+        document.querySelector('.tab-bar').classList.remove('open');
+    }
 }
 
 // --- MODAL SYSTEM ---
