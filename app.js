@@ -43,6 +43,7 @@ function initDraggableMenu() {
     let offsetX, offsetY;
 
     menu.addEventListener('mousedown', (e) => {
+        if (window.innerWidth >= 1024) return; // Disabled on desktop
         if (e.target.closest('.tab-btn')) return; // Allow clicking buttons
         isDragging = true;
         offsetX = e.clientX - menu.offsetLeft;

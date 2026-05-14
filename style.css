@@ -347,3 +347,60 @@ input:focus, select:focus {
 
 .hidden { display: none; }
 .tab-content.active { display: block; }
+
+/* =========================================
+   Desktop / Tablet Responsive Layout
+   ========================================= */
+@media (min-width: 1024px) {
+    .app-container {
+        max-width: 1400px; /* Allow much more space on PC */
+        padding-left: 120px; /* Make room for the new sidebar */
+        padding-right: 30px;
+        padding-bottom: 40px;
+    }
+
+    /* Transform bottom tab bar into a left floating sidebar */
+    .tab-bar {
+        position: fixed;
+        left: 20px;
+        top: 50%;
+        bottom: auto;
+        transform: translateY(-50%) !important; /* Force override draggable transforms if any */
+        flex-direction: column;
+        width: 80px;
+        height: auto;
+        padding: 1.5rem 0.5rem;
+        gap: 1.5rem;
+        border-radius: 30px;
+    }
+
+    .tab-btn {
+        padding: 10px 0;
+    }
+
+    /* Transform Tab Content into a masonry-like grid */
+    .tab-content.active {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 1.5rem;
+        align-items: start;
+    }
+
+    /* Prevent default bottom margin on grid items */
+    .section-card {
+        margin-bottom: 0;
+    }
+
+    /* Elements that should span across all columns */
+    .alert-container, 
+    .total-card, 
+    .btn-outline.btn-block, 
+    .detailed-container {
+        grid-column: 1 / -1;
+    }
+
+    /* Form Rows look better with more gap on desktop */
+    .form-row {
+        gap: 1.5rem;
+    }
+}
