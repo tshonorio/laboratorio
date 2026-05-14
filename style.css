@@ -50,7 +50,7 @@ header {
 #hamburger-btn {
     position: absolute;
     top: 2.8rem;
-    left: 1.5rem;
+    left: 0;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--glass-border);
     color: var(--text-main);
@@ -384,6 +384,7 @@ input:focus, select:focus {
 @media (min-width: 1024px) {
     .app-container {
         max-width: 1400px;
+        margin: 0 auto;
         padding-left: 140px;
         padding-right: 40px;
         padding-bottom: 40px;
