@@ -1,0 +1,13 @@
+{
+  "title": "Calculadora 3D Pro — Web App PWA",
+  "summary": "Projeto de precificação para impressão 3D. Foco exclusivo no Web App PWA. Estrutura de repositórios GitHub (laboratorio/sistema), protocolo de trabalho e design system documentados.",
+  "created": "2026-05-14",
+  "last_updated": "2026-05-14",
+  "workspace": "c:\\Users\\mlwkt500\\Documents\\Soft",
+  "references": [
+    "c:\\Users\\mlwkt500\\Documents\\Soft\\MEMORIA_PROJETO.md",
+    "https://github.com/tshonorio/laboratorio",
+    "https://github.com/tshonorio/sistema"
+  ],
+  "tags": ["web-app", "pwa", "3d-print", "calculadora", "github-pages", "javascript"]
+}
