@@ -628,7 +628,7 @@ function updateDashboard() {
     if (catalog) {
         catalog.innerHTML = Object.values(produtos).map(p => `
             <div class="product-card">
-                <div class="product-card-img" style="background-image: ${p.imagem ? `url(${p.imagem})` : 'none'}" onclick="openImageViewer('${p.imagem}')">
+                <div class="product-card-img" style="background-image: ${p.imagem ? `url('${p.imagem}')` : 'none'}" onclick="openImageViewer('${p.imagem}')">
                     ${!p.imagem ? '<i class="fas fa-image"></i>' : ''}
                     <div class="img-overlay"><i class="fas fa-search-plus"></i></div>
                 </div>
