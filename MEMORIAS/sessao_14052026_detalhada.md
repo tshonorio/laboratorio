@@ -1,26 +1,18 @@
 # 📓 Log de Alterações Detalhado - 14/05/2026
 
 ## 💬 Prompts e Interações desta Sessão
-1. **"menu hamburguer quando entrace no tamanho de telas proporcionais a celulares"**: Implementado sistema de navegação adaptativo (Sidebar PC / Hambúrguer Mobile).
-2. **"meu celular é um poco x7 pro, na tela dele o menu hamburguer ficou mais para a direita"**: Ajustado alinhamento do botão para `left: 0` (alinhado com os cards).
-3. **"visualizador de imagem não está funcionando... upload venham de dentro do meu drive"**: Criado Lightbox para imagens e função de limpeza de links do Google Drive.
-4. **"na home as imagens nao estão sendo exibidas"**: Corrigido altura de contêineres e aspas em URLs no JS.
-5. **"grafico mostrando a diferença entre os produtos"**: Implementado gráfico de barras horizontais dinâmicas com degradê e glow.
-6. **"alertas... estoque a baixo de 30% do cadastrado"**: Lógica de 30% aplicada a todos os materiais e produtos com UI de pulsação.
-7. **"aba de preço... visibilidade dos itens [menu] está ficando ruim"**: Refinado CSS de `select` e `option` para Dark Mode.
-8. **"cadastrar produtos... grade 2x2... remover [caixa de imagem]... textos centralizados"**: Reorganização total do modal para compacidade e estética.
+...
+9. **"Plus Jakarta Sans defina essa fonte como layout padrao"**: Migração completa de tipografia e criação da Skill de Tipografia.
+10. **"aba de preço... se torne a aba de fechamento... processo de embalamento"**: Implementação do workflow de Checkout com fila de pacotes e fechamento diário.
+11. **"guarde todos seus arquivos dentro da pasta memorias"**: Reorganização estrutural do repositório.
+12. **"crie um caminho de leitura de todos esses arquivos [Auto-Run]"**: Estabelecido protocolo de inicialização na memória principal.
 
 ## 🛠️ Alterações Técnicas (Git)
-- **Commits realizados:**
-  - `feat: implementa menu hamburguer para mobile`
-  - `fix: corrige erro de sintaxe e largura do container mobile`
-  - `fix: alinha botao hambúrguer com o início dos cartões`
-  - `feat: implementa visualizador de imagem e suporte a links do Google Drive`
-  - `fix: corrige exibicao de imagens no catalogo da home`
-  - `feat: estiliza o grafico de produtos mais vendidos na home`
-  - `feat: implementa alertas inteligentes de estoque (limite de 30%)`
-  - `style: melhora visibilidade de menus de selecao e itens de lista`
-  - `style: reorganiza modal de produtos em grade 2x2 e simplifica upload`
+- **Novos Commits:**
+  - `docs: cria sistema de SKILLS para automatizar protocolos de design e lógica`
+  - `chore: move arquivos de memória para a pasta MEMORIAS`
+  - `feat: implementa workflow de embalamento, fechamento diário e fonte Plus Jakarta Sans`
+  - `docs: estabelece protocolo de inicialização automática e caminho de leitura`
 
 ## 🎨 Evolução do Gosto (User Preferences)
 - **Alinhamento:** Prefere alinhamento rigoroso com a borda dos elementos (cards).
