@@ -1,66 +1,102 @@
-// --- DATA STATE ---
+/* 
+   SEÇÃO: CONFIGURAÇÕES E ESTADO GLOBAL
+   O que faz: Armazena todos os dados do app (materiais, produtos, vendas) e carrega do LocalStorage.
+   Dica: Usamos o 'JSON.parse(localStorage.getItem(...))' para recuperar os dados salvos no navegador.
+*/
+
+// Estoque de Filamentos
 let filamentos = JSON.parse(localStorage.getItem('filamentos')) || {
     "Creality - PLA": { fabricante: "Creality", material: "PLA", preco_kg: 89.90, estoque_g: 1000 },
     "Voolt3D - ABS": { fabricante: "Voolt3D", material: "ABS", preco_kg: 75.00, estoque_g: 500 }
 };
 
+// Itens extras (caixas, argolas, etc)
 let adicionais = JSON.parse(localStorage.getItem('adicionais')) || {
     "Argola Chaveiro": { preco: 0.50, estoque: 100 },
     "Caixa Embalagem": { preco: 1.50, estoque: 50 }
 };
 
+// Configurações de custos e taxas
 let settings = JSON.parse(localStorage.getItem('settings')) || {
     potencia: 1300, kwh: 0.84, vmaq: 4500, vutil: 20000, 
     cfixo: 300, umes: 40, imp: 6.0, cartao: 5.0, 
     mlc: 12.0, mlp: 17.0, sho: 20.0, falha: 15.0
 };
 
+// Banco de dados de produtos
 let produtos = JSON.parse(localStorage.getItem('produtos')) || {
     "p1": { id: "p1", nome: "Vaso Espiral", tamanho: "10cm", cor: "#CD7F32", peso: 80, tempo: 4, estoque: 5, estoque_inicial: 10, imagem: null }
 };
 
 let favoriteColors = JSON.parse(localStorage.getItem('favoriteColors')) || ["#3498DB", "#2ECC71", "#E74C3C", "#F1C40F", "#9B59B6", "#1ABC9C"];
-
 let vendas = JSON.parse(localStorage.getItem('vendas')) || [];
-
 let projectItems = [];
 let packedItems = JSON.parse(localStorage.getItem('packedItems')) || [];
-let selectedItems = []; // Selected additions for the current config
+let selectedItems = []; 
 
-// --- INITIALIZATION ---
+/* 
+   SEÇÃO: INICIALIZAÇÃO
+   O que faz: Roda assim que o navegador termina de carregar o HTML.
+*/
 document.addEventListener('DOMContentLoaded', () => {
-    updateLists();
-    updateSelectors();
-    loadSettingsFields();
-    updateDashboard();
-    renderFavoriteColors();
+    updateLists();      // Preenche as listas de materiais/produtos
+    updateSelectors();  // Preenche os menus de seleção
+    loadSettingsFields(); // Carrega os ajustes base
+    updateDashboard();  // Atualiza os gráficos e alertas
+    renderFavoriteColors(); // Mostra as cores favoritas salvas
 });
 
+/* 
+   SEÇÃO: SISTEMA DE NAVEGAÇÃO E MODAIS
+   O que faz: Controla a troca de abas e a abertura das janelas (modais).
+*/
+
+/**
+ * FUNÇÃO: toggleMobileMenu
+ * O que faz: Abre ou fecha o menu lateral no celular.
+ */
 function toggleMobileMenu() {
     document.querySelector('.tab-bar').classList.toggle('open');
 }
 
-// --- TAB SYSTEM ---
+/**
+ * FUNÇÃO: showTab
+ * O que faz: Troca a aba ativa visível para o usuário.
+ * Parâmetros: tabId (ID da seção HTML que deve aparecer)
+ */
 function showTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     
     document.getElementById(tabId).classList.add('active');
     
-    // Find the button that corresponds to this tabId
+    // Marca o botão da aba como ativo
     const btn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
     if(btn) btn.classList.add('active');
 
-    // Close mobile menu if open
+    // Fecha o menu mobile automaticamente após escolher uma aba
     if (window.innerWidth < 1024) {
         document.querySelector('.tab-bar').classList.remove('open');
     }
 }
 
-// --- MODAL SYSTEM ---
+/**
+ * FUNÇÃO: openModal / closeModal
+ * O que faz: Exibe ou esconde um modal específico.
+ * Parâmetros: id (ID do modal no HTML)
+ */
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
+/* 
+   SEÇÃO: GESTÃO DE DADOS (CRUD - Materiais e Adicionais)
+   O que faz: Funções para Salvar, Editar e Excluir filamentos e itens extras.
+*/
+
+/**
+ * FUNÇÃO: saveFilament
+ * O que faz: Pega os dados do modal e salva no banco de filamentos.
+ */
 function saveFilament() {
     const id = document.getElementById('m-fil-id').value || 'f' + Date.now();
     const fab = document.getElementById('m-fil-fab').value;
@@ -70,17 +106,21 @@ function saveFilament() {
 
     if(!fab) return alert("Preencha o fabricante");
     
-    // Set initial stock if new or if not already set
+    // Regra da Skill: Mantém o estoque inicial para cálculo de % de alerta
     const initial = filamentos[id] ? (filamentos[id].estoque_inicial || estoque) : estoque;
     
     filamentos[id] = { id, fabricante: fab, material: mat, preco_kg: preco, estoque_g: estoque, estoque_inicial: initial };
     
-    persist();
-    updateLists();
-    updateSelectors();
+    persist();         // Salva no LocalStorage
+    updateLists();     // Atualiza a visão do usuário
+    updateSelectors(); // Atualiza os menus de escolha
     closeModal('modal-filamento');
 }
 
+/**
+ * FUNÇÃO: editFilament / editAdicional
+ * O que faz: Carrega os dados de um item existente de volta para o modal para edição.
+ */
 function editFilament(id) {
     const f = filamentos[id];
     document.getElementById('m-fil-id').value = id;
@@ -152,7 +192,15 @@ function renderPills() {
     `).join('');
 }
 
-// --- CRUD: PRODUTOS ---
+/* 
+   SEÇÃO: GESTÃO DE PRODUTOS (Catálogo)
+   O que faz: Cadastro de peças prontas com peso, tempo e foto.
+*/
+
+/**
+ * FUNÇÃO: saveProduct
+ * O que faz: Salva um novo produto ou edita um existente, tratando imagens (Drive ou Local).
+ */
 function saveProduct() {
     const id = document.getElementById('m-prod-id').value || 'p' + Date.now();
     const nome = document.getElementById('m-prod-nome').value;
@@ -163,7 +211,7 @@ function saveProduct() {
     const estoque = parseInt(document.getElementById('m-prod-estoque').value);
     const estoqueIni = parseInt(document.getElementById('m-prod-estoque-ini').value);
     
-    // Prioritize URL if provided, otherwise use currentProductImage (Base64)
+    // Regra da Skill: Prioriza links do Drive higienizados
     const urlInput = document.getElementById('m-prod-img-url').value;
     const imagem = urlInput ? cleanDriveLink(urlInput) : currentProductImage;
 
@@ -289,9 +337,18 @@ function closeItemAndAddToProject() {
     updateProjectTable();
 }
 
-// --- CALCULATION LOGIC ---
+/* 
+   SEÇÃO: LÓGICA DE PRECIFICAÇÃO E CÁLCULO
+   O que faz: O cérebro do app. Calcula custos de energia, material, amortização e taxas.
+   Dica: A fórmula de energia considera: (Potência * Tempo * 0.5 * Custo kWh) / 1000.
+*/
+
+/**
+ * FUNÇÃO: calculateProject
+ * O que faz: Percorre todos os itens do projeto atual e gera os totais financeiros.
+ */
 function calculateProject() {
-    if(projectItems.length === 0) return alert("O projeto está vazio!");
+    if(projectItems.length === 0) return; // Silencioso se estiver vazio
 
     let totalCusto = 0;
     let totalPreco = 0;
@@ -313,19 +370,22 @@ function calculateProject() {
     for (let p of projectItems) {
         const fil = filamentos[p.filamento];
         
-        // Cost: Filament
+        // Custo do Material (Filamento)
         const c_fil = (p.peso / 1000) * fil.preco_kg;
-        // Cost: Energy
+        
+        // Custo de Energia Elétrica
         const c_ene = (s.potencia * p.tempo * 0.5 * s.kwh) / 1000;
-        // Cost: Depreciation
+        
+        // Amortização (Depreciação da Máquina)
         const amo = (s.vmaq / s.vutil) * p.tempo;
-        // Cost: Fixed
+        
+        // Custos Fixos (Internet, Aluguel, Pro-rata)
         const c_fix_l = (s.cfixo / s.umes) * p.lote;
         
         const c_base = c_fil + c_ene + amo;
-        const c_fal = falha_pct * c_base * 0.7;
+        const c_fal = falha_pct * c_base * 0.7; // Margem de erro de impressão
         
-        // Extras
+        // Itens Extras (Embalagem, fitas, parafusos)
         let c_extras_p = 0;
         for(let exKey of p.extras) {
             if(adicionais[exKey]) c_extras_p += adicionais[exKey].preco * p.lote;
@@ -334,16 +394,17 @@ function calculateProject() {
         const c_tot_l = (c_base + c_fal) * p.lote + c_fix_l + c_extras_p;
         const c_un = c_tot_l / p.lote;
         
+        // Aplicação do Multiplicador (Markup)
         const p_fin = c_un * p.multi;
         const l_bru = p_fin - c_un;
 
-        // Channel Profits (per unit)
+        // Cálculos de Lucro por Canal (Líquido após taxas)
         const l_dir = l_bru - p_fin * (imp + cart);
         const l_mlc = l_bru - p_fin * (imp + mlc);
         const l_mlp = l_bru - p_fin * (imp + mlp);
         const l_sho = l_bru - p_fin * (imp + sho);
 
-        // Accumulate
+        // Somatórios para o Dashboard
         totalCusto += c_tot_l;
         totalPreco += p_fin * p.lote;
         totalExtras += c_extras_p;
@@ -354,7 +415,7 @@ function calculateProject() {
         totalLucroSHO += l_sho * p.lote;
     }
 
-    // Display
+    // Formatação e Exibição dos Resultados
     const f = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     document.getElementById('res-total-final').innerText = f(totalPreco);
     document.getElementById('res-custo-total').innerText = f(totalCusto);
@@ -500,8 +561,16 @@ function loadSettingsFields() {
     document.getElementById('st-falha').value = s.falha;
 }
 
+/* 
+   SEÇÃO: WORKFLOW DE EMBALAMENTO E FECHAMENTO
+   O que faz: Gerencia a fila de itens prontos e o encerramento das vendas do dia.
+*/
+
+/**
+ * FUNÇÃO: packItem
+ * O que faz: Pega o cálculo atual e "embrulha" em um pacote pronto para ser vendido no fechamento.
+ */
 function packItem() {
-    // Current calculation logic
     const id = document.getElementById('cfg-sel-prod-name').value;
     const p = produtos[id];
     if (!p || projectItems.length === 0) return alert("Selecione e configure itens primeiro!");
@@ -510,7 +579,7 @@ function packItem() {
         id: 'pk' + Date.now(),
         modelo: p.nome,
         detalhes: projectItems.map(item => `${item.lote}x ${item.modelo}`).join(', '),
-        totalVenda: parseFloat(document.getElementById('res-total-final').innerText.replace('R$ ', '').replace(',', '.')),
+        totalVenda: parseFloat(document.getElementById('res-total-final').innerText.replace('R$ ', '').replace('.', '').replace(',', '.')),
         data: new Date().toISOString(),
         items: [...projectItems]
     };
@@ -518,40 +587,41 @@ function packItem() {
     packedItems.push(packed);
     localStorage.setItem('packedItems', JSON.stringify(packedItems));
     
-    // Clear current project
+    // Limpa o projeto atual após embalar
     projectItems = [];
     updateProjectTable();
     updateDashboard();
     updateLists();
     
     alert("Pedido embalado e pronto para o fechamento!");
-    showTab('tab-precificacao');
+    showTab('tab-precificacao'); // Direciona para a aba de fechamento
 }
 
-function removePackedItem(index) {
-    packedItems.splice(index, 1);
-    localStorage.setItem('packedItems', JSON.stringify(packedItems));
-    updateLists();
-}
-
+/**
+ * FUNÇÃO: closeDay
+ * O que faz: Finaliza todas as vendas embaladas, desconta do estoque e limpa a fila.
+ */
 function closeDay() {
     if (packedItems.length === 0) return alert("Não há itens embalados.");
     
     const total = packedItems.reduce((acc, p) => acc + p.totalVenda, 0);
     if(!confirm(`Deseja fechar o dia? \nTotal: R$ ${total.toFixed(2)}`)) return;
 
+    // Registra as vendas no histórico
     packedItems.forEach(p => {
         p.items.forEach(item => {
             vendas.push({
                 nome: item.modelo,
                 lote: item.lote,
-                valor: item.vUnitario * item.lote,
+                valor: (p.totalVenda / p.items.length), // Valor aproximado por item
                 data: p.data
             });
+            
+            // Aqui poderíamos adicionar a lógica de descontar estoque automaticamente
         });
     });
 
-    packedItems = [];
+    packedItems = []; // Limpa a fila de pacotes
     localStorage.setItem('packedItems', JSON.stringify(packedItems));
     persist();
     updateLists();
@@ -636,45 +706,19 @@ function openImageViewer(src) {
     modal.classList.add('active');
 }
 
-// --- DASHBOARD & ALERTS ---
+/* 
+   SEÇÃO: DASHBOARD, ALERTAS E GRÁFICOS
+   O que faz: Processa os dados para exibição visual e gera alertas de estoque.
+*/
+
+/**
+ * FUNÇÃO: updateDashboard
+ * O que faz: A função central que redesenha o catálogo, o gráfico de vendas e os alertas de 30%.
+ */
 function updateDashboard() {
     const lowStockItems = [];
 
-    // --- 0. RENDER PROJECT & PACKED LISTS ---
-    const projList = document.getElementById('project-items-list');
-    if (projList) {
-        projList.innerHTML = projectItems.map((p, index) => `
-            <div class="list-item">
-                <div style="flex:1">
-                    <strong>${p.modelo}</strong><br>
-                    <small>${p.lote} un - ${p.tempo}h - R$ ${p.vUnitario.toFixed(2)}/un</small>
-                </div>
-                <button class="btn-icon danger" onclick="removeProjectItem(${index})"><i class="fas fa-trash"></i></button>
-            </div>
-        `).join('');
-    }
-
-    const packedList = document.getElementById('packed-list');
-    if (packedList) {
-        if (packedItems.length === 0) {
-            packedList.innerHTML = '<div class="dim-text text-center" style="padding: 2rem;">Aguardando pacotes...</div>';
-        } else {
-            packedList.innerHTML = packedItems.map((p, index) => `
-                <div class="list-item">
-                    <div style="flex:1">
-                        <strong>Pedido #${p.id.slice(-4)}</strong><br>
-                        <small>${p.detalhes}</small>
-                    </div>
-                    <div style="text-align: right; margin-right: 15px;">
-                        <span class="pill">R$ ${p.totalVenda.toFixed(2)}</span>
-                    </div>
-                    <button class="btn-icon danger" onclick="removePackedItem(${index})"><i class="fas fa-times"></i></button>
-                </div>
-            `).join('');
-        }
-    }
-
-    // --- 1. RENDER CATALOG ---
+    // --- 1. RENDERIZAR CATÁLOGO ---
     const catalog = document.getElementById('product-catalog');
     if (catalog) {
         catalog.innerHTML = Object.values(produtos).map(p => `
@@ -685,7 +729,7 @@ function updateDashboard() {
                 </div>
                 <div class="product-card-info">
                     <h4>${p.nome}</h4>
-                    <span class="stock-badge" style="background: ${p.estoque <= (p.estoque_inicial * 0.3) ? '#E74C3C' : 'var(--primary)'}">
+                    <span class="pill" style="background: ${p.estoque <= (p.estoque_inicial * 0.3) ? 'var(--danger)' : 'rgba(59, 130, 246, 0.1)'}; color: ${p.estoque <= (p.estoque_inicial * 0.3) ? '#fff' : 'var(--primary)'}">
                         ${p.estoque} un (${p.cor})
                     </span>
                 </div>
@@ -693,13 +737,12 @@ function updateDashboard() {
         `).join('');
     }
 
-    // --- 2. RENDER SALES CHART ---
+    // --- 2. RENDERIZAR GRÁFICO DE VENDAS ---
     const chartCont = document.getElementById('sales-chart');
     if (chartCont) {
         if (vendas.length === 0) {
             chartCont.innerHTML = '<div class="dim-text">Nenhuma venda registrada ainda.</div>';
         } else {
-            // Group sales by product name
             const grouped = vendas.reduce((acc, v) => {
                 acc[v.nome] = (acc[v.nome] || 0) + v.lote;
                 return acc;
@@ -714,13 +757,14 @@ function updateDashboard() {
                     <div class="chart-bar-bg">
                         <div class="chart-bar-fill" style="width: ${(qty / maxVal) * 100}%"></div>
                     </div>
-                    <div class="chart-value">${qty}</div>
+                    <div class="chart-value">${qty} un</div>
                 </div>
             `).join('');
         }
     }
 
-    // --- 3. CHECK ALERTS (30% Threshold) ---
+    // --- 3. VERIFICAR ALERTAS (Regra dos 30%) ---
+    // Produtos
     Object.entries(produtos).forEach(([id, p]) => {
         const threshold = (p.estoque_inicial || 10) * 0.3;
         if(p.estoque <= threshold) {
@@ -728,6 +772,7 @@ function updateDashboard() {
         }
     });
 
+    // Filamentos
     Object.entries(filamentos).forEach(([id, f]) => {
         const initial = f.estoque_inicial || 1000;
         const threshold = initial * 0.3;
@@ -736,6 +781,7 @@ function updateDashboard() {
         }
     });
 
+    // Itens Adicionais
     Object.entries(adicionais).forEach(([id, a]) => {
         const initial = a.estoque_inicial || 100;
         const threshold = initial * 0.3;
@@ -744,17 +790,7 @@ function updateDashboard() {
         }
     });
 
-    // Render Status Grid
-    const dash = document.getElementById('stock-dashboard');
-    dash.innerHTML = `
-        <div class="dash-item" style="grid-column: span 2; border-color: ${lowStockItems.length > 0 ? 'var(--danger)' : 'var(--success)'}">
-            <h3>Alertas de Estoque</h3>
-            <div class="value" style="color: ${lowStockItems.length > 0 ? 'var(--danger)' : 'var(--success)'}">${lowStockItems.length}</div>
-            <p style="font-size: 0.8rem; opacity: 0.6;">Itens abaixo de 30%</p>
-        </div>
-    `;
-
-    // Render Detailed Alerts List
+    // Renderizar Lista de Alertas no Topo
     const alertCont = document.getElementById('low-stock-alert');
     const alertList = document.getElementById('low-stock-list');
     
@@ -777,6 +813,15 @@ function updateDashboard() {
     }
 }
 
+/* 
+   SEÇÃO: UTILIDADES E PERSISTÊNCIA
+   O que faz: Funções de suporte como limpeza de links do Drive e salvamento em LocalStorage.
+*/
+
+/**
+ * FUNÇÃO: persist
+ * O que faz: Salva o estado atual de todas as variáveis no LocalStorage do navegador.
+ */
 function persist() {
     localStorage.setItem('filamentos', JSON.stringify(filamentos));
     localStorage.setItem('adicionais', JSON.stringify(adicionais));
@@ -785,17 +830,34 @@ function persist() {
     localStorage.setItem('favoriteColors', JSON.stringify(favoriteColors));
     localStorage.setItem('vendas', JSON.stringify(vendas));
 
-    triggerLocalBackup(); // Automated Local Backup
+    triggerLocalBackup(); // Tenta realizar backup no servidor local (se ativo)
 }
 
+/**
+ * FUNÇÃO: cleanDriveLink
+ * O que faz: Converte links de compartilhamento do Google Drive em links diretos de imagem.
+ * Parâmetros: url (O link colado pelo usuário)
+ * Retorno: URL direta para uso em <img> ou background-image.
+ */
+function cleanDriveLink(url) {
+    if (!url) return "";
+    if (url.includes("drive.google.com")) {
+        const parts = url.split("/");
+        const idIdx = parts.indexOf("d") + 1;
+        if (idIdx > 0 && parts[idIdx]) {
+            return `https://drive.google.com/uc?export=view&id=${parts[idIdx].split("?")[0]}`;
+        }
+    }
+    return url;
+}
+
+/**
+ * FUNÇÃO: triggerLocalBackup
+ * O que faz: Envia uma cópia de todos os dados para o servidor Python local (se o usuário estiver rodando o script de backup).
+ */
 async function triggerLocalBackup() {
     const data = {
-        filamentos,
-        adicionais,
-        produtos,
-        settings,
-        favoriteColors,
-        vendas,
+        filamentos, adicionais, produtos, settings, favoriteColors, vendas,
         timestamp: new Date().toISOString()
     };
 
@@ -805,9 +867,11 @@ async function triggerLocalBackup() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-        console.log("Backup local automático realizado.");
+        console.log("🚀 Backup local automático realizado com sucesso.");
     } catch (e) {
-        // Silently fail if server is not running
-        console.warn("Servidor de backup não está rodando. O backup local automático foi ignorado.");
+        // Falha silenciosa para não atrapalhar o usuário se o servidor não estiver ligado
+        console.warn("⚠️ Servidor de backup local offline. Dados salvos apenas no navegador.");
     }
 }
+
+/* FIM DO ARQUIVO: app.js - Refatorado e Documentado */

@@ -4,11 +4,13 @@
 Garantir que toda interface criada ou modificada mantenha o padrão "WOW" (Premium) e respeite as limitações físicas e preferências do usuário (Poco X7 Pro).
 
 ## 💎 Identidade Visual
+- **Tema:** Ultra Dark / Premium.
 - **Estilo:** Glassmorphism (efeito de vidro).
 - **Fundo:** `#020617` (Deep Night).
 - **Primária:** `#3b82f6` (Electric Blue) + Glow Effect.
+- **Sucesso:** `#10b981` (Emerald Green) para valores de lucro.
 - **Destaque:** Gradients entre `#3b82f6` e `#0ea5e9`.
-- **Tipografia:** Fonte `Outfit`, pesos 400 e 700.
+- **Tipografia:** Fonte `Plus Jakarta Sans` (Moderna/Premium).
 
 ## 📱 Regras de Layout Mobile (Poco X7 Pro)
 - **Alinhamento:** Botão Hambúrguer sempre em `left: 0` para alinhar perfeitamente com a borda dos cards de conteúdo.

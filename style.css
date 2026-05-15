@@ -1,24 +1,41 @@
+/* 
+   SEÇÃO: VARIÁVEIS DE DESIGN (Design Tokens)
+   O que faz: Define as cores, sombras e espaçamentos padrão de todo o app.
+   Dica: Usar variáveis facilita mudar o tema (ex: de Dark para Light) em um só lugar.
+*/
 :root {
+    /* Cores de Fundo */
     --bg-color: #020617;
     --card-bg: rgba(15, 23, 42, 0.6);
+    
+    /* Cores de Destaque */
     --primary: #3b82f6;
     --primary-glow: rgba(59, 130, 246, 0.5);
     --secondary: #8b5cf6;
     --success: #10b981;
     --success-glow: rgba(16, 185, 129, 0.4);
     --danger: #f43f5e;
+    
+    /* Tipografia e Bordas */
     --text-main: #f8fafc;
     --text-dim: #94a3b8;
     --glass-border: rgba(255, 255, 255, 0.08);
     --accent: #0ea5e9;
+    
+    /* Sombras e Efeitos */
     --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
 }
 
+/* 
+   SEÇÃO: RESET E CONFIGURAÇÕES BASE
+   O que faz: Remove margens padrão do navegador e define a fonte global.
+   Dica: 'box-sizing: border-box' garante que o padding não aumente o tamanho total do elemento.
+*/
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent; /* Remove o brilho azul ao tocar no celular */
 }
 
 body {
@@ -27,22 +44,31 @@ body {
     color: var(--text-main);
     line-height: 1.6;
     overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased; /* Torna a fonte mais nítida em telas Mac/Android */
+    
+    /* Gradiente de fundo para profundidade */
     background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, transparent 50%),
                 radial-gradient(circle at 100% 100%, #0f172a 0%, transparent 50%),
                 #020617;
     min-height: 100vh;
 }
 
+/* 
+   SEÇÃO: LAYOUT PRINCIPAL
+   O que faz: Define o contêiner mestre que segura toda a interface.
+*/
 .app-container {
     width: 100%;
     max-width: 100%;
     margin: 0;
     padding: 0 1.5rem 40px;
-    padding-top: env(safe-area-inset-top);
+    padding-top: env(safe-area-inset-top); /* Suporte para 'notch' de iPhones e Androids novos */
 }
 
+/* 
+   SEÇÃO: CABEÇALHO (Header)
+   O que faz: Título do app e botão de menu mobile.
+*/
 header {
     position: relative;
     padding: 3rem 1.5rem 2rem;
@@ -52,7 +78,7 @@ header {
 #hamburger-btn {
     position: absolute;
     top: 2.8rem;
-    left: 0;
+    left: 0; /* Alinhado com a borda do layout mobile */
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--glass-border);
     color: var(--text-main);
@@ -66,8 +92,7 @@ header {
     cursor: pointer;
     z-index: 1100;
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: all 0.2s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #hamburger-btn:active {
@@ -75,13 +100,14 @@ header {
 }
 
 @media (min-width: 1024px) {
-    #hamburger-btn { display: none; }
+    #hamburger-btn { display: none; } /* Esconde o botão se estiver no PC */
 }
 
 header h1 {
     font-size: 2.2rem;
     font-weight: 800;
     letter-spacing: -1px;
+    /* Efeito de texto gradiente premium */
     background: linear-gradient(to right, #fff, var(--primary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -92,16 +118,19 @@ header h1 span {
     opacity: 0.8;
 }
 
-/* Tab Navigation - Sidebar/Hamburger Mobile */
+/* 
+   SEÇÃO: NAVEGAÇÃO (Sidebar / Mobile Menu)
+   O que faz: Controla a barra lateral que aparece no PC ou ao clicar no hambúrguer no celular.
+   Dica: 'backdrop-filter: blur' cria o efeito de vidro fosco muito usado em designs modernos.
+*/
 .tab-bar {
     position: fixed;
     top: 0;
-    left: -280px; /* Hidden by default on mobile */
+    left: -280px; /* Começa escondido à esquerda no mobile */
     bottom: 0;
     width: 280px;
     background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -111,11 +140,11 @@ header h1 span {
     box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
     z-index: 1000;
     border-right: 1px solid var(--glass-border);
-    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Transição suave de entrada */
 }
 
 .tab-bar.open {
-    left: 0;
+    left: 0; /* Mostra o menu quando a classe 'open' é adicionada via JS */
 }
 
 .tab-btn {
@@ -123,7 +152,7 @@ header h1 span {
     border: none;
     color: var(--text-dim);
     display: flex;
-    flex-direction: row; /* Horizontal for sidebar style */
+    flex-direction: row;
     align-items: center;
     font-size: 0.95rem;
     font-weight: 600;
@@ -140,7 +169,6 @@ header h1 span {
     font-size: 1.2rem;
     width: 24px;
     text-align: center;
-    transition: transform 0.2s;
 }
 
 .tab-btn.active {
@@ -150,24 +178,30 @@ header h1 span {
 }
 
 .tab-btn.active i {
-    text-shadow: 0 0 15px var(--primary-glow);
+    text-shadow: 0 0 15px var(--primary-glow); /* Brilho no ícone ativo */
 }
 
-/* Section Cards - Premium Glass */
-.section-card {
+/* 
+   SEÇÃO: COMPONENTES UI (Biblioteca Premium)
+   O que faz: Define classes reutilizáveis como cartões e botões.
+   Dica: Centralizar estilos aqui evita que o CSS cresça descontroladamente.
+*/
+
+/* Cartão com efeito de Vidro (Glassmorphism) */
+.glass-card, .section-card {
     background: var(--card-bg);
     border-radius: 24px;
     padding: 1.8rem;
     margin-bottom: 1.5rem;
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--shadow-lg);
     transition: transform 0.3s, border-color 0.3s;
 }
 
-.section-card:hover {
+.glass-card:hover, .section-card:hover {
     border-color: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px); /* Efeito de levitação ao passar o mouse */
 }
 
 h2 {
@@ -203,8 +237,11 @@ h2 i {
     background: rgba(255, 255, 255, 0.06);
 }
 
-/* Inputs & Selects */
-input, select {
+/* 
+   SEÇÃO: INPUTS E FORMULÁRIOS
+   O que faz: Estiliza campos de texto, seletores e rótulos.
+*/
+.input-premium, input, select {
     width: 100%;
     background: rgba(15, 23, 42, 0.6);
     border: 1px solid var(--glass-border);
@@ -217,30 +254,31 @@ input, select {
     backdrop-filter: blur(5px);
 }
 
-select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1.2rem center;
-    background-size: 1.2rem;
-    cursor: pointer;
-}
-
-option {
-    background-color: #0f172a;
-    color: white;
-    padding: 12px;
-}
-
-input:focus, select:focus {
+input:focus, select:focus, .input-premium:focus {
     outline: none;
     border-color: var(--primary);
     background: rgba(59, 130, 246, 0.1);
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
 }
 
-/* Buttons */
-.btn {
+/* Centralização de texto em formulários (Preferência do Usuário) */
+.text-center {
+    text-align: center;
+}
+
+/* Grade 2x2 para dados numéricos compactos */
+.form-grid-2x2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* 
+   SEÇÃO: BOTÕES PREMIUM
+   O que faz: Cria botões com gradientes e sombras "glow".
+*/
+.btn, .btn-premium {
     border: none;
     border-radius: 16px;
     padding: 1rem 1.5rem;
@@ -253,14 +291,14 @@ input:focus, select:focus {
     gap: 10px;
 }
 
+.btn:active, .btn-premium:active {
+    transform: scale(0.96); /* Efeito de clique físico */
+}
+
 .btn-primary {
     background: linear-gradient(135deg, var(--primary), var(--accent));
     color: white;
     box-shadow: 0 10px 20px -5px var(--primary-glow);
-}
-
-.btn-primary:active {
-    transform: scale(0.96);
 }
 
 .btn-success {
@@ -270,6 +308,11 @@ input:focus, select:focus {
 }
 
 /* Total Card - The "Wow" Element */
+/* 
+   SEÇÃO: CARD DE TOTAL (Destaque Principal)
+   O que faz: O cartão "UAU" que mostra o preço final calculado.
+   Dica: Usamos um gradiente forte e sombras internas para dar profundidade.
+*/
 .total-card {
     background: linear-gradient(165deg, #1e293b, #020617);
     border-radius: 32px;
@@ -306,7 +349,7 @@ input:focus, select:focus {
     font-weight: 800;
     color: #fff;
     margin: 1rem 0 2rem;
-    text-shadow: 0 0 30px var(--success-glow);
+    text-shadow: 0 0 30px var(--success-glow); /* Brilho de sucesso no valor */
     background: linear-gradient(to bottom, #fff, #10b981);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -331,6 +374,10 @@ input:focus, select:focus {
 }
 
 /* Rest of standard components from previous style.css to maintain functionality */
+/* 
+   SEÇÃO: LISTAS E ITENS
+   O que faz: Estiliza os itens de materiais, produtos e filas de embalagem.
+*/
 .list-item {
     background: rgba(255, 255, 255, 0.03);
     padding: 1.2rem;
@@ -357,9 +404,23 @@ input:focus, select:focus {
     color: var(--text-dim);
     font-size: 0.8rem;
 }
-.pill { background: rgba(59, 130, 246, 0.1); color: var(--primary); padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(59, 130, 246, 0.2); }
 
-/* Modal Styles */
+/* Pequenas etiquetas (Pills) para status ou categorias */
+.pill { 
+    background: rgba(59, 130, 246, 0.1); 
+    color: var(--primary); 
+    padding: 6px 14px; 
+    border-radius: 20px; 
+    font-size: 0.75rem; 
+    font-weight: 700; 
+    border: 1px solid rgba(59, 130, 246, 0.2); 
+}
+
+/* 
+   SEÇÃO: MODAIS (Janelas Sobrepostas)
+   O que faz: Controla a aparência das janelas de cadastro que flutuam sobre o app.
+   Dica: 'z-index: 2000' garante que o modal fique acima de qualquer outro elemento.
+*/
 .modal {
     display: none;
     position: fixed;
@@ -370,14 +431,13 @@ input:focus, select:focus {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     align-items: center;
     justify-content: center;
 }
 
 .modal.active {
     display: flex;
-    animation: modalFadeIn 0.3s ease;
+    animation: modalFadeIn 0.3s ease; /* Animação suave de entrada */
 }
 
 @keyframes modalFadeIn {
@@ -393,8 +453,13 @@ input:focus, select:focus {
     box-shadow: 0 0 100px rgba(0,0,0,0.8);
     width: 90%;
     max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-height: 90vh; /* Regra da Skill: Evitar scroll infinito, limitar altura */
+    overflow-y: auto; /* Se o conteúdo for grande, o scroll fica dentro do modal */
+}
+
+/* Centralização específica para modais de formulário */
+.centered-modal {
+    text-align: center;
 }
 
 .modal-actions {
@@ -524,7 +589,10 @@ input:focus, select:focus {
     to { transform: scale(1); opacity: 1; }
 }
 
-/* Product Catalog Grid */
+/* 
+   SEÇÃO: CATÁLOGO DE PRODUTOS
+   O que faz: Exibe a grade de produtos com fotos e preços.
+*/
 .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -612,7 +680,11 @@ input:focus, select:focus {
     border-color: var(--primary);
 }
 
-/* Alert Box Styles */
+/* 
+   SEÇÃO: SISTEMA DE ALERTAS (Estoque 30%)
+   O que faz: Cartão vermelho pulsante que avisa quando o material está acabando.
+   Dica: 'animation: pulse' cria o efeito visual de emergência.
+*/
 .alert-container {
     background: rgba(244, 63, 94, 0.1);
     border: 1px solid var(--danger);
@@ -620,7 +692,6 @@ input:focus, select:focus {
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     animation: pulse 2s infinite ease-in-out;
 }
 
@@ -693,7 +764,10 @@ input:focus, select:focus {
     100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
 }
 
-/* Sales Chart Styles */
+/* 
+   SEÇÃO: DASHBOARD E GRÁFICOS
+   O que faz: Exibe barras de progresso para os produtos mais vendidos.
+*/
 .sales-chart-container {
     margin-top: 15px;
 }
@@ -735,42 +809,10 @@ input:focus, select:focus {
     font-weight: 700;
 }
 
-/* Compact Modal & Grid */
-.centered-modal {
-    text-align: center;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.form-grid-2x2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin: 1rem 0;
-}
-
-.image-upload-simple {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
-}
-
-.image-upload-simple input[type="file"] {
-    font-size: 0.8rem;
-    padding: 0.5rem;
-}
-
-.image-upload-simple input[type="text"] {
-    padding: 0.6rem;
-    font-size: 0.85rem;
-}
-
+/* 
+   SEÇÃO: AJUSTES DE FORMULÁRIOS MODAIS
+   O que faz: Regras específicas para labels e títulos dentro dos modais.
+*/
 .centered-modal h3 {
     margin-bottom: 1.2rem;
 }
@@ -778,8 +820,10 @@ input:focus, select:focus {
 .centered-modal .form-group label {
     display: block;
     width: 100%;
-    text-align: center;
+    text-align: center; /* Centraliza labels conforme preferência do usuário */
     margin-bottom: 6px;
     font-size: 0.85rem;
     opacity: 0.8;
 }
+
+/* FIM DO ARQUIVO: style.css - Pronto para Produção */
